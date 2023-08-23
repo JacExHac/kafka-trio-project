@@ -1,0 +1,27 @@
+CRNI KRUG:
+	publisha na processed-requests
+	salje http prema klijentu (ili salje na neki topic, kako god)
+	subscribean na weather-status i weather-request
+
+ZELENI KRUG:
+	publisha na weather-status svake minute
+	subscribean na processed-requests
+	sout-a ono sto procita iz processed requests
+
+ZUTI KRUG ("KLIJENT"):
+	publisha na weather-request (salje svoju IP adresu)
+	prima HTTP zahtjev
+
+
+USE CASE: KLIJENT ŠALJE ZAHTJEV ZA VREMENOM:
+
+1. Klijent posalje na weather-request zahtjev da želi saznati kakvo je vrijeme (šalje svoju ip adresu)
+2. Netko iz grupe crnih krugova čita tu poruku iz weather-request i gleda svoj najnoviji weather-status (jer je subscribean "pasivno" tamo)
+3. Odgovara klijentu preko http-a
+4. Ako dobije odgovor npr 200 OK od klijenta, u processed-requests šalje informaciju o IP adresi klijenta, izvještaju vremena koji mu je poslan i o samome sebi (da znamo koji je proces obradio podatke)
+5. 2 Zelena kruga pokupe iz weather-statusa taj obradeni zahtjev te ih obojica ispisuju (jer nisu u istoj grupi)
+
+
+USE CASE: ZELENI KRUG GENERIRA ZAHTJEV
+
+1. Svaku minutu, zeleni krug publisha na weather-status
