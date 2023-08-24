@@ -1,9 +1,14 @@
 import io.smallrye.reactive.messaging.kafka.api.OutgoingKafkaRecordMetadata;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
+import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Message;
 
 import java.net.Inet4Address;
@@ -30,5 +35,14 @@ public class Application {
 
         return "Sent request";
     }
+
+    @POST
+    @Path("/weather")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response getWeatherReport(WeatherReportDto weatherReportDto) {
+        System.out.println(weatherReportDto.toString());
+        return Response.status(Response.Status.OK).build();
+    }
+
 
 }
