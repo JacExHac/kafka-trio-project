@@ -1,4 +1,13 @@
 Kafka trio projekt:
 
 Kafka kontejner:
-	docker run --net kafka-trio-project-net -e EULA="https://licenses.lenses.io/d/?id=82e1b9bf-249d-11ee-8f1e-42010af01003" -p 3030:3030 -p 9092:9092 -p 2181:2181 lensesio/box
+	docker run --net kafka-trio-project-net -e ENV_HOST=127.0.0.1 -e EULA="https://licenses.lenses.io/d/?id=82e1b9bf-249d-11ee-8f1e-42010af01003" -p 3030:3030 -p 9092:9092 -p 2181:2181 lensesio/box
+
+
+
+[
+    {
+      "key": "as",
+      "value": {"city": "Zagreb", "temperature": 35}
+    }
+]

@@ -40,7 +40,6 @@ public class Application {
     @Path("/weather")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response getWeatherReport(WeatherReportDto weatherReportDto) {
-        System.out.println(weatherReportDto.toString());
         return Response.status(Response.Status.OK).build();
     }
 
