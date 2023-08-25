@@ -30,9 +30,10 @@ public class Application {
     @GET
     public void sendMessage() throws UnknownHostException {
 
-        String ipAddress = Inet4Address.getLocalHost().getHostAddress();
+
+        String ipAddress = System.getenv("APP_IP");
         //TODO: map processed request correctly!!!!
-        String data = "http://" + /*ipAddress */ "127.0.0.1" + ":" + String.valueOf(httpPort) + "/client-weather";
+        String data = "http://" + ipAddress + ":" + String.valueOf(httpPort) + "/client-weather";
 
 
         OutgoingKafkaRecordMetadata<?> metadata = OutgoingKafkaRecordMetadata.builder()

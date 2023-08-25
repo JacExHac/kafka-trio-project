@@ -58,7 +58,8 @@ public class WeatherService {
             String ipAddress = url.getHost();
 
             ProcRequestDto procRequestDto = new ProcRequestDto();
-            procRequestDto.setServiceIp(Inet4Address.getLocalHost().getHostAddress());
+            String localIpAddress = System.getenv("SERVICE_IP");
+            procRequestDto.setServiceIp(localIpAddress);
             procRequestDto.setClientIp(ipAddress);
             procRequestDto.setWeatherStatusDto(new WeatherStatusDto(lastWeatherStatus));
             System.out.println("PROCESSED REQUEST DTO: " + procRequestDto);
