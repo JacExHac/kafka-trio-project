@@ -1,5 +1,8 @@
-import com.fasterxml.jackson.annotation.JsonInclude;
-@JsonInclude(JsonInclude.Include.NON_NULL)
+package dtos;
+
+import io.quarkus.runtime.annotations.RegisterForReflection;
+
+@RegisterForReflection
 public class WeatherStatusDto {
     private String city;
     private int temperature;
@@ -12,6 +15,11 @@ public class WeatherStatusDto {
         this.city = city;
         this.temperature = temperature;
         this.chanceOfRain = chanceOfRain;
+    }
+    public WeatherStatusDto(WeatherStatusDto lastWeatherStatus) {
+        this.city = lastWeatherStatus.getCity();
+        this.temperature = lastWeatherStatus.getTemperature();
+        this.chanceOfRain = lastWeatherStatus.getChanceOfRain();
     }
 
     public String getCity() {

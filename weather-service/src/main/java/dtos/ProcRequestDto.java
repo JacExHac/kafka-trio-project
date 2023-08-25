@@ -1,3 +1,8 @@
+package dtos;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+
 public class ProcRequestDto {
 
     private String serviceIp;
@@ -29,20 +34,21 @@ public class ProcRequestDto {
         this.clientIp = clientIp;
     }
 
-    public WeatherStatusDto getWeatherReportDto() {
+
+    public WeatherStatusDto getWeatherStatusDto() {
         return weatherStatusDto;
     }
 
-    public void setWeatherReportDto(WeatherStatusDto weatherStatusDto) {
+    public void setWeatherStatusDto(WeatherStatusDto weatherStatusDto) {
         this.weatherStatusDto = weatherStatusDto;
     }
 
     @Override
     public String toString() {
-        return "ProcRequestDto{" +
+        return "dtos.ProcRequestDto{" +
                 "serviceIp='" + serviceIp + '\'' +
                 ", clientIp='" + clientIp + '\'' +
-                ", weatherReportDto=" + weatherStatusDto +
+                ", weatherReportDto=" + weatherStatusDto.toString() +
                 '}';
     }
 }
