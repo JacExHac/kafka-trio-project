@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: weather-service-service
 spec:
-  type: LoadBalancer
+  type: ClusterIp
   selector:
     app: weather-service
   ports:
