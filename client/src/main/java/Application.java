@@ -28,13 +28,15 @@ public class Application {
     int httpPort;
 
     @GET
-    public void sendMessage() throws UnknownHostException {
-
+    public Response sendMessage() throws UnknownHostException {
 
         String ipAddress = System.getenv("APP_IP");
         //TODO: map processed request correctly!!!!
         String data = "http://" + ipAddress + ":" + String.valueOf(httpPort) + "/client-weather";
 
+        System.out.println("Here is the \"URL\": " + data);
+
+        System.out.println("INET4ADDRESS: " + Inet4Address.getLocalHost().getHostAddress());
 
         OutgoingKafkaRecordMetadata<?> metadata = OutgoingKafkaRecordMetadata.builder()
                 .withTopic("weather-request")
@@ -43,6 +45,7 @@ public class Application {
         emitter.send(Message.of(data).addMetadata(metadata));
 
         System.out.println("Sent message");
+        return Response.ok().build();
     }
 
     @POST
