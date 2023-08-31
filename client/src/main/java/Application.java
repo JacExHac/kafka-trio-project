@@ -55,5 +55,7 @@ public class Application {
         return Response.status(Response.Status.OK).entity(weatherStatusDto.toString()).build();
     }
 
+    @Incoming("weather-response")
+
 
 }
