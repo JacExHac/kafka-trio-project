@@ -49,7 +49,7 @@ public class Application {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response getWeatherReport(WeatherStatusDto weatherStatusDto) {
         System.out.println("Received weather report: " + weatherStatusDto.toString());
-        return Response.status(Response.Status.OK).build();
+        return Response.status(Response.Status.OK).entity(weatherStatusDto.toString()).build();
     }
 
 
