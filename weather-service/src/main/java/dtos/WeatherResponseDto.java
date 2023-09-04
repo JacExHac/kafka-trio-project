@@ -3,24 +3,20 @@ package dtos;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class WeatherStatusDto {
+public class WeatherResponseDto {
+
+    private String serviceIp;
+
     private String city;
     private int temperature;
     private int chanceOfRain;
 
-    public WeatherStatusDto() {
+    public String getServiceIp() {
+        return serviceIp;
     }
 
-    public WeatherStatusDto(String city, int temperature, int chanceOfRain) {
-        this.city = city;
-        this.temperature = temperature;
-        this.chanceOfRain = chanceOfRain;
-    }
-
-    public WeatherStatusDto(WeatherStatusDto lastWeatherStatus) {
-        this.city = lastWeatherStatus.getCity();
-        this.temperature = lastWeatherStatus.getTemperature();
-        this.chanceOfRain = lastWeatherStatus.getChanceOfRain();
+    public void setServiceIp(String serviceIp) {
+        this.serviceIp = serviceIp;
     }
 
     public String getCity() {
@@ -47,10 +43,18 @@ public class WeatherStatusDto {
         this.chanceOfRain = chanceOfRain;
     }
 
+    public WeatherResponseDto(String serviceIp, String city, int temperature, int chanceOfRain) {
+        this.serviceIp = serviceIp;
+        this.city = city;
+        this.temperature = temperature;
+        this.chanceOfRain = chanceOfRain;
+    }
+
     @Override
     public String toString() {
-        return "WeatherStatusDto{" +
-                "city='" + city + '\'' +
+        return "WeatherResponseDto{" +
+                "serviceIp='" + serviceIp + '\'' +
+                ", city='" + city + '\'' +
                 ", temperature=" + temperature +
                 ", chanceOfRain=" + chanceOfRain +
                 '}';

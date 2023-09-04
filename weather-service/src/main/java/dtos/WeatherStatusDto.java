@@ -49,7 +49,7 @@ public class WeatherStatusDto {
 
     @Override
     public String toString() {
-        return "WeatherReportDto{" +
+        return "WeatherStatusDto{" +
                 "city='" + city + '\'' +
                 ", temperature=" + temperature +
                 ", chanceOfRain=" + chanceOfRain +
