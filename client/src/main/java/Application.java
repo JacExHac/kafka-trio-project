@@ -1,5 +1,6 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dtos.WeatherResponseDto;
+import io.quarkus.scheduler.Scheduled;
 import io.smallrye.reactive.messaging.kafka.api.OutgoingKafkaRecordMetadata;
 import jakarta.inject.Inject;
 import jakarta.websocket.OnClose;
@@ -28,8 +29,6 @@ public class Application {
     @Channel("weather-request")
     Emitter<String> emitter;
 
-    private static Map<String, Session> pendingRequests = new ConcurrentHashMap<>(4);
-
     @OnOpen
     public void onOpen(Session session) {
 
@@ -51,10 +50,10 @@ public class Application {
     @OnMessage
     public void onMessage(String request, Session session) throws IOException {
         if(request.equals("WEATHER")) {
-            pendingRequests.put(session.getId(), session);
+            WebSocketManager.addSession(session.getId(), session);
             sendMessageRequest(session.getId());
         } else if(request.equals("DISCONNECT")) {
-            pendingRequests.remove(session.getId(), session);
+            WebSocketManager.removeSession(session.getId());
             session.close();
         }
     }
@@ -74,17 +73,7 @@ public class Application {
 
         WeatherResponseDto weatherResponseDto = objectMapper.readValue(weatherStatusString, WeatherResponseDto.class);
 
-        for(Session session : pendingRequests.values()) {
-            System.out.println(session.getRequestURI() + session.toString());
-        }
-
-        if(!pendingRequests.isEmpty()) {
-            for(Session s : pendingRequests.values()) {
-                s.getBasicRemote().sendText(weatherResponseDto.toString());
-            }
-            pendingRequests.clear();
-        }
+        WebSocketManager.sendWeatherResponseToAllSessions(weatherResponseDto);
     }
-
 
 }

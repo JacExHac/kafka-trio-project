@@ -16,8 +16,12 @@ spec:
     spec:
       containers:
         - name: weather-service
-          image: quarkus/weather-service-jvm
+          image: weather-service-image
           imagePullPolicy: Never
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
               value: kafka-service:9092
+            - name: SERVICE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP

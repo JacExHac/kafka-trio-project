@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: client
-          image: quarkus/client-jvm
+          image: client-image
           imagePullPolicy: Never
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
