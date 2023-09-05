@@ -1,26 +1,32 @@
-# kafka-trio-project
-HOW TO USE THIS PROJECT:
+#kafka-trio-project
 
-1. USE DOCKER COMMAND docker network create kafka-trio-project-net
-2.RUN THESE COMMANDS:
+This project has 3 internal smaller services that perform asynchronous operations via publish-subscribe method on Kafka. The end product is delivering randomly generated weather reports to clients connected via the WebSocket protocol. The internal structure is maintained via Kubernetes.
+=======================
+How to use:
 
+1. Install minikube
+2. Type minikube start in cmd
+3. Position to folder directory .../kafka-trio-project
+4. Type k apply -f .\kubernetes-files in cmd
+5. Type minikube tunnel in cmd
+6. Wait for services to load
+7. k get po (lists all running pods)
+8. k logs -f <podId> (tracks the pods' logs)
+9. Connect via postman to ws://localhost:8080/client
+10. After connecting, type WEATHER to recieve the newest non-sent weather report
+11. Type DISCONNECT to disconnect
+12. Be sure to check out the program logs
+=======================
 
- KAFKA-SERVER:
-		docker run --net kafka-trio-project-net --name kafka-server -e EULA="https://licenses.lenses.io/d/?id=82e1b9bf-249d-11ee-8f1e-42010af01003" --rm -p 3030:3030 -p 9092:9092 -p 2181:2181 lensesio/box
+(****IMPORTANT****) -> Prerequisite is to have the docker images locally on your computer (and "in" minikube).
 
-CLIENT:
-	./mvnw package
-	docker build -f src/main/docker/Dockerfile.jvm -t quarkus/client-jvm .
-	docker run --name client --net kafka-trio-project-net -e KAFKA_BOOTSTRAP_SERVERS=kafka-server:9092 -e APP_IP=client -i --rm -p 8080:8080 quarkus/client-jvm
+1. Position to one of the three projects (client; log-tracker-generator; weather-service)
+2. Run mvnw package
+3. Run the building process (f.e. docker build -f src/main/docker/Dockerfile.jvm -t weather-service-image .)
+4. Run minikube image load <name-of-image> (f.e. minikube image load weather-service-image)
 
+5. Also download the necessary lensesio/box Kafka image and load it into minikube too.
 
-WEATHER-SERVICE:
-	./mvnw package
-	docker build -f src/main/docker/Dockerfile.jvm -t quarkus/weather-service-jvm .
-	docker run --name weather-service --net kafka-trio-project-net -e SERVICE_IP=weather-service -e KAFKA_BOOTSTRAP_SERVERS=kafka-server:9092 -i --rm -p 8081:8080 quarkus/weather-service-jvm
+=======================
 
-
-LOG-TRACKER-GENERATOR:
-	./mvnw package
-	docker build -f src/main/docker/Dockerfile.jvm -t quarkus/log-tracker-generator-jvm .
-	docker run --name log-tracker-generator --net kafka-trio-project-net -e KAFKA_BOOTSTRAP_SERVERS=kafka-server:9092 -i --rm -p 8082:8080 quarkus/log-tracker-generator-jvm
+Be sure to test with multiple simultaneous websocket connections via Postman, change amounts of replicas in the application, connect to Kafka via localhost:3030 (user: admin, pass: admin) or change the spec type to ClusterIP to disable connecting to Kafka via your localhost.
