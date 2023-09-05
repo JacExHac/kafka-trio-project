@@ -16,6 +16,7 @@ How to use:
 10. After connecting, type WEATHER to recieve the newest non-sent weather report
 11. Type DISCONNECT to disconnect
 12. Be sure to check out the program logs
+
 =======================
 
 (****IMPORTANT****) -> Prerequisite is to have the docker images locally on your computer (and "in" minikube).
