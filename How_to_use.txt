@@ -1,0 +1,29 @@
+This project has 3 internal smaller services that perform asynchronous operations via publish-subscribe method on Kafka. The end product is delivering randomly generated weather reports to clients connected via the WebSocket protocol.
+
+How to use:
+
+1. Install minikube
+2. Type minikube start in cmd
+3. Position to folder directory .../kafka-trio-project
+4. Type k apply -f .\kubernetes-files in cmd
+5. Type minikube tunnel in cmd
+6. Wait for services to load
+7. k get po (lists all running pods)
+8. k logs -f <podId> (tracks the pods' logs)
+9. Connect via postman to ws://localhost:8080/client
+10. After connecting, type WEATHER to recieve the newest non-sent weather report
+11. Type DISCONNECT to disconnect
+12. Be sure to check out the program logs
+
+
+(****IMPORTANT****) -> Prerequisite is to have the docker images locally on your computer (and "in" minikube).
+
+1. Position to one of the three projects (client; log-tracker-generator; weather-service)
+2. Run mvnw package
+3. Run the building process (f.e. docker build -f src/main/docker/Dockerfile.jvm -t weather-service-image .)
+4. Run minikube image load <name-of-image> (f.e. minikube image load weather-service-image)
+
+5. Also download the necessary lensesio/box Kafka image and load it into minikube too.
+
+
+Be sure to test with multiple simultaneous websocket connections via Postman, change amounts of replicas in the application, connect to Kafka via localhost:3030 (user: admin, pass: admin) or change the spec type to ClusterIP to disable connecting to Kafka via your localhost.

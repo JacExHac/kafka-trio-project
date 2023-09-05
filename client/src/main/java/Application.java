@@ -1,56 +1,79 @@
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dtos.WeatherResponseDto;
+import io.quarkus.scheduler.Scheduled;
 import io.smallrye.reactive.messaging.kafka.api.OutgoingKafkaRecordMetadata;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.reactive.messaging.Channel;
-import org.eclipse.microprofile.reactive.messaging.Emitter;
-import org.eclipse.microprofile.reactive.messaging.Incoming;
-import org.eclipse.microprofile.reactive.messaging.Message;
+import jakarta.websocket.OnClose;
+import jakarta.websocket.OnMessage;
+import jakarta.websocket.OnOpen;
+import jakarta.websocket.Session;
+import jakarta.websocket.server.ServerEndpoint;
 
-import java.net.Inet4Address;
-import java.net.InetAddress;
+import org.eclipse.microprofile.reactive.messaging.*;
+
+import java.io.IOException;
 import java.net.UnknownHostException;
+import java.sql.SQLOutput;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
-@Path("/client-weather")
+@ServerEndpoint("/client")
 public class Application {
+
+    @Inject
+    ObjectMapper objectMapper;
 
     @Inject
     @Channel("weather-request")
     Emitter<String> emitter;
 
-    @Inject
-    @ConfigProperty(name ="quarkus.http.port")
-    int httpPort;
+    @OnOpen
+    public void onOpen(Session session) {
 
-    @GET
-    public void sendMessage() throws UnknownHostException {
+        CompletableFuture.runAsync(() -> {
+            try {
+                session.getBasicRemote().sendText("Type \"WEATHER\" if you would like the next weather report in our country.\nIf you would like to disconnect type DISCONNECT.");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println(">>>>CLIENT WITH ID " + session.getId() + " CONNECTED");
+        });
+    }
 
+    @OnClose
+    public void onClose(Session session) {
+        System.out.println(">>>>CLIENT WITH ID " + session.getId() + " DISCONNECTED");
+    }
 
-        String ipAddress = System.getenv("APP_IP");
-        //TODO: map processed request correctly!!!!
-        String data = "http://" + ipAddress + ":" + String.valueOf(httpPort) + "/client-weather";
+    @OnMessage
+    public void onMessage(String request, Session session) throws IOException {
+        if(request.equals("WEATHER")) {
+            WebSocketManager.addSession(session.getId(), session);
+            sendMessageRequest(session.getId());
+        } else if(request.equals("DISCONNECT")) {
+            WebSocketManager.removeSession(session.getId());
+            session.close();
+        }
+    }
 
-
+    public void sendMessageRequest(String sessionId) throws UnknownHostException {
         OutgoingKafkaRecordMetadata<?> metadata = OutgoingKafkaRecordMetadata.builder()
                 .withTopic("weather-request")
-                .withKey(Inet4Address.getLocalHost().getHostAddress())
+                .withKey(sessionId)
                 .build();
-        emitter.send(Message.of(data).addMetadata(metadata));
-
-        System.out.println("Sent message");
+        emitter.send(Message.of(sessionId).addMetadata(metadata));
+        System.out.println(">>>>>Sent message request to topic for client whose sessionId is " + sessionId);
     }
 
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response getWeatherReport(WeatherStatusDto weatherStatusDto) {
-        System.out.println("Received weather report: " + weatherStatusDto.toString());
-        return Response.status(Response.Status.OK).build();
-    }
+    @Incoming("weather-response")
+    public void processWeatherResponse(String weatherStatusString) throws IOException {
+        System.out.println();
 
+        WeatherResponseDto weatherResponseDto = objectMapper.readValue(weatherStatusString, WeatherResponseDto.class);
+
+        WebSocketManager.sendWeatherResponseToAllSessions(weatherResponseDto);
+    }
 
 }

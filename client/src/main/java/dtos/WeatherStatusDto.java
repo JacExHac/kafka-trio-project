@@ -1,3 +1,5 @@
+package dtos;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -47,7 +49,7 @@ public class WeatherStatusDto {
 
     @Override
     public String toString() {
-        return "WeatherReportDto{" +
+        return "WeatherStatusDto{" +
                 "city='" + city + '\'' +
                 ", temperature=" + temperature +
                 ", chanceOfRain=" + chanceOfRain +

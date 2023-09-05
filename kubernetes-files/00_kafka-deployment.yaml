@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka
+  template:
+    metadata:
+      labels:
+        app: kafka
+    spec:
+      containers:
+        - name: kafka
+          image: lensesio/box
+          imagePullPolicy: Never
+          env:
+            - name: EULA
+              value: https://licenses.lenses.io/d/?id=82e1b9bf-249d-11ee-8f1e-42010af01003
+            - name: ADV_HOST
+              value: kafka-service
